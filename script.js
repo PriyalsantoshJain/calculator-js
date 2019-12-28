@@ -12,11 +12,29 @@ class Calculator {
     }
 
     delete() {
-        
+        this.currentOperand = this.currentOperand.toString().slice(0, -1)
     }
 
     compute() {
-
+        const prev = parseFloat(this.previousOperand)
+        const curr = parseFloat(this.currentOperand)
+        let computation 
+        if(isNaN(prev) || isNaN(curr)) return 
+        switch(this.operation)
+        {
+            case '+': computation = prev + curr 
+            break;
+            case '-': computation = prev - curr
+            break;
+            case '%': computation = prev / curr
+            break;
+            case '*': computation = prev * curr
+            break;
+            default: return
+        }
+        this.currentOperand = computation
+        this.previousOperand = ''
+        this.operation = undefined
     }
 
     appendNumber(number) {
@@ -25,14 +43,19 @@ class Calculator {
     }
 
     chooseOperation(operation) {
-        
+        if(this.currentOperand === '') return
+        if(this.previousOperand !== '') {
+            this.compute()
+        }
+        this.operation = operation 
+        this.previousOperand = this.currentOperand
+        this.currentOperand = ''
     }
 
     updateDisplay() {
         this.currentOperandTextElement.innerText = this.currentOperand
         this.previousOperandTextElement.innerText = this.previousOperand
     }
-
 }
 
 const numberButton = document.querySelectorAll('[data-number]')
@@ -51,6 +74,30 @@ numberButton.forEach(button => {
         calculator.updateDisplay()
     })
 })
+
+operationButton.forEach(button => {
+    button.addEventListener('click', () => {
+        calculator.chooseOperation(button.innerText)
+        calculator.updateDisplay()
+    })
+})
+
+allClearButton.addEventListener('click', button => {
+        calculator.clear()
+        calculator.updateDisplay()
+})
+
+equalsButton.addEventListener('click', button => {
+        calculator.compute()
+        calculator.updateDisplay()
+})
+
+deleteButton.addEventListener('click', button => {
+    calculator.delete()
+    calculator.updateDisplay()
+})
+
+
 
 
 
